@@ -1,0 +1,38 @@
+//
+//  stashedawaycode.swift
+//  teddy
+//
+//  Created by Rodrigo Sánchez Yuste on 9/6/25.
+//
+
+var body: some View {
+    NavigationView {
+        ZStack {
+            Color(.systemIndigo)
+                .ignoresSafeArea()
+
+            if viewModel.sleepData.isEmpty {
+                Text("No sleep data found.")
+                    .foregroundColor(.white)
+                    .font(.title2)
+            } else {
+                List(viewModel.sleepData) { sleep in
+                    VStack(alignment: .leading) {
+                        Text("Start: \(sleep.startDate.formatted())")
+                        Text("End: \(sleep.endDate.formatted())")
+                        Text("Duration: \(formatDuration(sleep.duration))")
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(10)
+                    .shadow(radius: 2)
+                }
+                .scrollContentBackground(.hidden)
+            }
+        }
+        .navigationTitle("Sleep Data")
+        .onAppear {
+            viewModel.requestAuthorization()
+        }
+    }
+}
