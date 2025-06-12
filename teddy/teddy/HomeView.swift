@@ -10,8 +10,8 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var manager: HealthManager
     var body: some View {
-        VStack {
-            ScrollView {
+        ScrollView {
+            VStack {
                 LazyVGrid(columns: Array(repeating:GridItem(spacing: 20), count: 2)) {
                     ForEach(manager.activities.sorted(by: {$0.value.id < $1.value.id}), id: \.key) {
                         item in ActivityCard(activity: item.value)
@@ -19,18 +19,19 @@ struct HomeView: View {
                 }
                 .padding(.horizontal)
             }
-            .refreshable {
-                            manager.fetchTodaySteps()
-                            manager.fetchTodayFlights()
-                        }
+            
+            .onAppear{
+                manager.fetchTodaySteps()
+                manager.fetchTodayFlights()
+            }
         }
-        .onAppear{
-            manager.fetchTodaySteps()
-            manager.fetchTodayFlights()
-        }
+        .refreshable {
+                        manager.fetchTodaySteps()
+                        manager.fetchTodayFlights()
+                    }
     }
 }
 
-#Preview {
-    HomeView()
-}
+//#Preview {
+//    HomeView()
+//}

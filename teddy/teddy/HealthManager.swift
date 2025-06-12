@@ -26,7 +26,9 @@ class HealthManager: ObservableObject {
         let flights = HKQuantityType(.flightsClimbed)
         let distance = HKQuantityType(.distanceWalkingRunning)
         
-        let HealthTypes: Set = [steps, flights, distance]
+        let sleep = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+        
+        let HealthTypes: Set = [steps, flights, distance, sleep]
         
         Task {
             do {
@@ -34,6 +36,7 @@ class HealthManager: ObservableObject {
                 fetchTodaySteps()
                 fetchTodayFlights()
                 fetchDistanceWalkingRunning()
+                fetchTodaySleep()
             } catch {
                 print("error fetching health data babes")
             }
@@ -111,6 +114,53 @@ class HealthManager: ObservableObject {
             
     }
     
+    func fetchTodaySleep() {
+        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else {
+            print("Sleep type unavailable")
+            return
+        }
+
+        let startOfDay = Calendar.current.startOfDay(for: Date())
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: Date(), options: .strictStartDate)
+
+        let query = HKSampleQuery(sampleType: sleepType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, results, error in
+            guard let samples = results as? [HKCategorySample], error == nil else {
+                print("Error fetching sleep data")
+                return
+            }
+
+            // Filter for stages that count as sleep
+            let sleepStages: Set<Int> = [
+                HKCategoryValueSleepAnalysis.asleepCore.rawValue,
+                HKCategoryValueSleepAnalysis.asleepDeep.rawValue,
+                HKCategoryValueSleepAnalysis.asleepREM.rawValue
+            ]
+
+            let totalSleepSeconds = samples
+                .filter { sleepStages.contains($0.value) }
+                .reduce(0) { $0 + $1.endDate.timeIntervalSince($1.startDate) }
+
+            let hours = totalSleepSeconds / 3600
+            let formatted = String(format: "%.1f hrs", hours)
+
+            let activity = Activity(
+                id: 3,
+                title: "Today's Sleep",
+                subtitle: "Goal: 8 hrs",
+                image: "bed.double.fill",
+                amount: formatted
+            )
+
+            DispatchQueue.main.async {
+                self.activities["todaysSleep"] = activity
+            }
+
+            print("Total sleep: \(formatted)")
+        }
+
+        healthStore.execute(query)
+    }
+
     
 }
 
