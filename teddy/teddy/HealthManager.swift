@@ -105,7 +105,7 @@ class HealthManager: ObservableObject {
             
             let formattedDistance = String(format: "%.2f km", distanceWalkingRunning)
             
-            let activity = Activity(id: 2, title: "Walking + Running Distance", subtitle: "10km", image: "figure.run", amount: formattedDistance)
+            let activity = Activity(id: 2, title: "Walking + Running Distance", subtitle: "Goal: 10km", image: "figure.run", amount: formattedDistance)
             
             DispatchQueue.main.async{
                 self.activities["todaysDistance"] = activity
@@ -183,6 +183,6 @@ extension Double {
         numberFormatter.numberStyle = .decimal
         numberFormatter.maximumFractionDigits = 0
         
-        return numberFormatter.string(from: NSNumber(value: self))!
+        return numberFormatter.string(from: NSNumber(value: self)) ?? "0"
     }
 }
