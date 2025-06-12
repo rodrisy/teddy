@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct teddyApp: App {
+    @StateObject var manager = HealthManager()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            teddyTabView()
+                .environmentObject(manager)
         }
     }
 }
