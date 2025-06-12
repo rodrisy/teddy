@@ -21,6 +21,9 @@ class HealthManager: ObservableObject {
     
     @Published var activities: [String: Activity] = [:]
     
+    @Published var sleepSegments: [SleepSegment] = []
+
+    
     init() {
         let steps = HKQuantityType(.stepCount)
         let flights = HKQuantityType(.flightsClimbed)
@@ -153,6 +156,16 @@ class HealthManager: ObservableObject {
 
             DispatchQueue.main.async {
                 self.activities["todaysSleep"] = activity
+
+                self.sleepSegments = samples
+                    .filter { $0.value != HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue }
+                    .map {
+                        SleepSegment(
+                            stage: SleepStage(value: $0.value),
+                            start: $0.startDate,
+                            end: $0.endDate
+                        )
+                    }
             }
 
             print("Total sleep: \(formatted)")

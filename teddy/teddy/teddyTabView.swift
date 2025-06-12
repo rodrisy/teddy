@@ -21,12 +21,19 @@ struct teddyTabView: View {
                 }
                 .environmentObject(manager)
             
+            SleepView()
+                .tag("Sleep")
+                .tabItem {
+                    Image(systemName: "bed.double.fill")
+                }
             
             ContentView()
                 .tag("Content")
                 .tabItem {
                     Image(systemName: "person")
                 }
+            
+            
         }
     }
 }
