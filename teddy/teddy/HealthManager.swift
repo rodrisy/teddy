@@ -22,6 +22,9 @@ class HealthManager: ObservableObject {
     @Published var activities: [String: Activity] = [:]
     
     @Published var sleepSegments: [SleepSegment] = []
+    
+    @Published var selectedDate: Date = .startOfDay
+
 
     
     init() {
@@ -36,15 +39,35 @@ class HealthManager: ObservableObject {
         Task {
             do {
                 try await healthStore.requestAuthorization(toShare : [], read : HealthTypes)
-                fetchTodaySteps()
-                fetchTodayFlights()
-                fetchDistanceWalkingRunning()
-                fetchTodaySleep()
+                refreshAllData(for: selectedDate)
             } catch {
-                print("error fetching health data babes")
+                print("error fetching health data")
             }
         }
     }
+    
+    func refreshAllData(for date: Date) {
+        fetchTodaySteps()
+        fetchTodayFlights()
+        fetchDistanceWalkingRunning()
+        fetchSleep(for: date)
+    }
+
+    func goToPreviousDay() {
+        selectedDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate)!
+        refreshAllData(for: selectedDate)
+    }
+
+    func goToNextDay() {
+        // Prevent viewing future dates
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate)!
+        if tomorrow <= Date() {
+            selectedDate = tomorrow
+            refreshAllData(for: selectedDate)
+        }
+    }
+
+
     
     
     func fetchTodaySteps() {
@@ -64,7 +87,7 @@ class HealthManager: ObservableObject {
                 self.activities["todaySteps"] = activity
             }
              
-            print(stepCount.formattedString())
+//            print(stepCount.formattedString())
          }
         
         healthStore.execute(query)
@@ -86,7 +109,7 @@ class HealthManager: ObservableObject {
                 self.activities["todaysFlights"] = activity
             }
             
-            print(flightsClimbed.formattedString())
+//            print(flightsClimbed.formattedString())
         }
         healthStore.execute(query)
             
@@ -111,20 +134,22 @@ class HealthManager: ObservableObject {
                 self.activities["todaysDistance"] = activity
             }
             
-            print(distanceWalkingRunning)
+//            print(distanceWalkingRunning)
         }
         healthStore.execute(query)
             
     }
     
-    func fetchTodaySleep() {
+    func fetchSleep(for date: Date) {
         guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else {
             print("Sleep type unavailable")
             return
         }
 
-        let startOfDay = Calendar.current.startOfDay(for: Date())
-        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: Date(), options: .strictStartDate)
+        let startOfDay = Calendar.current.startOfDay(for: date)
+        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
+
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: endOfDay, options: .strictStartDate)
 
         let query = HKSampleQuery(sampleType: sleepType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, results, error in
             guard let samples = results as? [HKCategorySample], error == nil else {
@@ -132,7 +157,6 @@ class HealthManager: ObservableObject {
                 return
             }
 
-            // Filter for stages that count as sleep
             let sleepStages: Set<Int> = [
                 HKCategoryValueSleepAnalysis.asleepCore.rawValue,
                 HKCategoryValueSleepAnalysis.asleepDeep.rawValue,
@@ -146,6 +170,8 @@ class HealthManager: ObservableObject {
             let hours = totalSleepSeconds / 3600
             let formatted = String(format: "%.1f hrs", hours)
 
+            let estimatedCycles = Int(totalSleepSeconds / (90 * 60)) // one cycle ~90 mins
+
             let activity = Activity(
                 id: 3,
                 title: "Today's Sleep",
@@ -154,8 +180,17 @@ class HealthManager: ObservableObject {
                 amount: formatted
             )
 
+            let cyclesActivity = Activity(
+                id: 4,
+                title: "Sleep Cycles",
+                subtitle: "Est. cycles last night",
+                image: "circle.grid.cross", // You can change to any relevant SF Symbol
+                amount: "\(estimatedCycles)"
+            )
+
             DispatchQueue.main.async {
                 self.activities["todaysSleep"] = activity
+                self.activities["todaysSleepCycles"] = cyclesActivity
 
                 self.sleepSegments = samples
                     .filter { $0.value != HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue }
@@ -168,11 +203,12 @@ class HealthManager: ObservableObject {
                     }
             }
 
-            print("Total sleep: \(formatted)")
+            print("Total sleep: \(formatted), Cycles: \(estimatedCycles)")
         }
 
         healthStore.execute(query)
     }
+
 
     
 }
@@ -186,3 +222,5 @@ extension Double {
         return numberFormatter.string(from: NSNumber(value: self)) ?? "0"
     }
 }
+
+

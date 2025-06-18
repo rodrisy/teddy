@@ -25,19 +25,14 @@ struct SleepChartView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 4))
                 .foregroundStyle(by: .value("Stage", segment.stage.rawValue.capitalized))
             }
+            // Order Y-axis top-down: Awake → REM → Core → Deep
+            .chartYScale(domain: ["Awake", "Rem", "Core", "Deep"])
             .chartForegroundStyleScale([
                 "Awake": Color.yellow,
                 "Rem": Color.purple,
                 "Core": Color.blue,
-                "Deep": Color.indigo,
-                "Unknown": Color.gray,
+                "Deep": Color.indigo
             ])
-            .chartYAxis {
-                AxisMarks(position: .leading) { value in
-                    AxisGridLine()
-                    AxisValueLabel()
-                }
-            }
             .chartXAxis {
                 AxisMarks(values: .stride(by: .hour)) {
                     AxisGridLine()
