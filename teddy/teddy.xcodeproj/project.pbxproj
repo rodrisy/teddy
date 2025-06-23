@@ -29,33 +29,9 @@
 		55CD195D2DF73BF000BC0841 /* teddyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = teddyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		55CD19762DF7405000BC0841 /* Exceptions for "teddy" folder in "teddy" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				stashedawaycode.txt,
-			);
-			target = 55CD19442DF73BED00BC0841 /* teddy */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		55CD19772DF7405000BC0841 /* Exceptions for "teddy" folder in "Compile Sources" phase from "teddy" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 55CD19412DF73BED00BC0841 /* Sources */;
-			membershipExceptions = (
-				stashedawaycode.txt,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		55CD19472DF73BED00BC0841 /* teddy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				55CD19762DF7405000BC0841 /* Exceptions for "teddy" folder in "teddy" target */,
-				55CD19772DF7405000BC0841 /* Exceptions for "teddy" folder in "Compile Sources" phase from "teddy" target */,
-			);
 			path = teddy;
 			sourceTree = "<group>";
 		};

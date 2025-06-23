@@ -26,7 +26,7 @@ struct HomeView: View {
             }
         }
         .refreshable {
-                        manager.fetchTodaySteps()
+            manager.fetchTodaySteps()
                         manager.fetchTodayFlights()
                     }
     }

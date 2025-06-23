@@ -41,50 +41,8 @@ struct SleepChartView: View {
             }
             .frame(height: 250)
             .padding(.horizontal)
+            
         }
     }
 }
 
-//
-//    var body: some View {
-//        VStack(alignment: .leading) {
-//            Text("Sleep Stages")
-//                .font(.headline)
-//                .padding(.leading)
-//
-//            Chart {
-//                ForEach(segments) { segment in
-//                    BarMark(
-//                        xStart: .value("Start", segment.start),
-//                        xEnd: .value("End", segment.end),
-//                        y: .value("Stage", segment.stage.rawValue.capitalized)
-//                    )
-//                    .clipShape(RoundedRectangle(cornerRadius: 4))
-//                    .foregroundStyle(by: .value("Stage", segment.stage.rawValue.capitalized))
-//                }
-//            }
-//            .chartForegroundStyleScale([
-//                "Awake": Color.yellow,
-//                "REM": Color.purple,
-//                "Core": Color.blue,
-//                "Deep": Color.indigo
-//            ])
-//            .chartYAxis {
-//                AxisMarks(position: .leading) { value in
-//                    AxisGridLine()
-//                    AxisValueLabel()
-//                }
-//            }
-//            .chartXAxis {
-//                AxisMarks(values: .stride(by: .hour)) {
-//                    AxisGridLine()
-//                    AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .abbreviated)), centered: true)
-//                }
-//            }
-//            .frame(height: 250)
-//            .padding(.horizontal)
-//        }
-//    }
-//}
-//
-//

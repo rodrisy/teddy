@@ -9,7 +9,7 @@ import SwiftUI
 
 struct teddyTabView: View {
     @EnvironmentObject var manager: HealthManager
-    @State var selectedTab = "Home"
+    @State var selectedTab = "Sleep"
     
     
     var body: some View {

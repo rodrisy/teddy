@@ -13,15 +13,18 @@ struct Activity {
     let subtitle: String
     let image: String
     let amount: String
+    let color: Color? // NEW
 }
 
+
 struct ActivityCard: View {
-    @State var activity: Activity
+    let activity: Activity
     
     var body: some View {
         ZStack {
             Color(uiColor: .systemGray6)
                 .cornerRadius(15)
+            
             VStack {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 5) {
@@ -36,10 +39,9 @@ struct ActivityCard: View {
                     Spacer()
                     
                     Image(systemName: activity.image)
-                        .foregroundColor(.green)
-                    
+                        .foregroundColor(activity.color ?? .green) // Default green if no color
                 }
-                .padding()
+                .padding(.vertical)
                 
                 Text(activity.amount)
                     .font(.system(size: 24))
@@ -48,8 +50,4 @@ struct ActivityCard: View {
             .cornerRadius(15)
         }
     }
-}
-
-#Preview {
-    ActivityCard(activity: Activity(id:  0, title: "Daily steps", subtitle: "Goal: 10,000", image: "figure.walk", amount: "6,545"))
 }
